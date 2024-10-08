@@ -1,0 +1,59 @@
+{
+  "name": "fastify-starter",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "A robust and modern starter template for building high-performance web applications using Fastify, TypeScript, and Drizzle ORM.",
+  "author": "Martin Acosta",
+  "license": "MIT",
+  "keywords": [
+    "fastify",
+    "typescript",
+    "drizzle",
+    "orm",
+    "starter",
+    "template"
+  ],
+  "scripts": {
+    "build": "rimraf ./dist && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "dev": "tsx --env-file=.env.development --watch-path=./src src/serve.ts",
+    "start": "node --env-file=.env dist/serve.js",
+    "lint": "eslint .",
+    "test": "tsx --test \"**/*.test.ts\"",
+    "coverage": "c8 npm run test",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:check": "drizzle-kit check"
+  },
+  "dependencies": {
+    "@fastify/auth": "^5.0.1",
+    "@fastify/autoload": "^6.0.1",
+    "@fastify/cors": "^10.0.0",
+    "@fastify/helmet": "^12.0.0",
+    "@fastify/jwt": "^9.0.1",
+    "@fastify/swagger": "^9.0.0",
+    "@fastify/type-provider-typebox": "^5.0.0",
+    "@geut/fastify-uws": "^5.2.0",
+    "@scalar/fastify-api-reference": "^1.25.30",
+    "@sinclair/typebox": "^0.33.12",
+    "@snaplet/copycat": "^5.0.0",
+    "drizzle-orm": "^0.34.1",
+    "fastify": "^5.0.0",
+    "fastify-better-error": "^0.0.5",
+    "fastify-plugin": "^5.0.0",
+    "oslo": "^1.2.1",
+    "postgres": "^3.4.4",
+    "typebox-env": "^0.0.5"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.2.11",
+    "@types/node": "^22.7.1",
+    "c8": "^10.1.2",
+    "drizzle-kit": "^0.25.0",
+    "eslint": "^9.10.0",
+    "eslint-config-standard-ext": "^2.1.1",
+    "rimraf": "^6.0.1",
+    "tsc-alias": "^1.8.10",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "lines": 95,
+  "branches": "82",
+  "statements": "95",
+  "exclude": [
+    "src/core/**"
+  ]
+}
