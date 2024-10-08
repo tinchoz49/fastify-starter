@@ -14,7 +14,7 @@ A robust and modern starter template for building high-performance web applicati
 - **[Standard Ext](https://github.com/tinchoz49/eslint-config-standard-ext)**: JavaScript style guide, linter, and formatter
 - **[Typebox](https://github.com/sinclair/typebox)**: JSON schema based validation and generation
 - **[Copycat](https://github.com/snaplet/copycat)**: Deterministic data generation for testing and seeding
-- **[typebox-env](https://github.com/lucasvieirasilva/typebox-env)**: Environment variables parsing and validation
+- **[typebox-env](https://github.com/tinchoz49/typebox-env)**: Environment variables parsing and validation
 
 ## Fastify Plugins
 
