@@ -18,7 +18,7 @@
     "dev": "tsx --env-file=.env.development --watch-path=./src src/serve.ts",
     "start": "node --env-file=.env dist/serve.js",
     "lint": "eslint .",
-    "test": "tsx --test \"**/*.test.ts\"",
+    "test": "tsc --noEmit && tsx --test \"**/*.test.ts\"",
     "coverage": "c8 npm run test",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",

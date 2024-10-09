@@ -46,7 +46,7 @@ describe('Health API', () => {
           PORT: 5432,
           USER: 'postgres',
           PASSWORD: 'wrongpassword',
-          DB: 'db',
+          NAME: 'db',
         },
         JWT: {
           SECRET: 'test',
