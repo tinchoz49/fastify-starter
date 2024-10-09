@@ -33,7 +33,7 @@ export default Type.Object({
         PORT: Type.Number(),
         USER: Type.String(),
         PASSWORD: Type.String(),
-        DB: Type.String(),
+        NAME: Type.String(),
         PATH: Type.Optional(Type.String()),
         SSL: Type.Optional(Type.Boolean()),
         MAX: Type.Optional(Type.Number()),

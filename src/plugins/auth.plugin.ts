@@ -1,15 +1,12 @@
 import type { FastifyRequest } from 'fastify'
 
-import fastifyAuth from '@fastify/auth'
-import fastifyJwt from '@fastify/jwt'
 import fp from 'fastify-plugin'
 
 import type { App } from '~/app.js'
 
 async function authPlugin(app: App) {
-  app.register(fastifyAuth)
-
-  app.register(fastifyJwt, {
+  app.register(import('@fastify/auth'))
+  app.register(import('@fastify/jwt'), {
     secret: app.env.JWT.SECRET,
     verify: {
       cache: app.env.JWT.CACHE,

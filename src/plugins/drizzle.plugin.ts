@@ -24,7 +24,7 @@ async function drizzlePlugin(app: App) {
         port: env.PORT,
         user: env.USER,
         password: env.PASSWORD,
-        database: env.DB,
+        database: env.NAME,
         path: env.PATH,
         ssl: env.SSL,
         max: env.MAX,
