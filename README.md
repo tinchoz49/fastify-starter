@@ -58,7 +58,7 @@ A robust and modern starter template for building high-performance web applicati
 Start by creating a new `.env` file and setting the correct environment variables.
 
 ```bash
-cp .env.example .env
+cp .env.example .env.development
 ```
 
 ```dotenv
