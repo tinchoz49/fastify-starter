@@ -27,8 +27,6 @@
   "dependencies": {
     "@fastify/auth": "^5.0.1",
     "@fastify/autoload": "^6.0.1",
-    "@fastify/cors": "^10.0.0",
-    "@fastify/helmet": "^12.0.0",
     "@fastify/jwt": "^9.0.1",
     "@fastify/swagger": "^9.0.0",
     "@fastify/type-provider-typebox": "^5.0.0",

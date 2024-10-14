@@ -19,8 +19,6 @@ A robust and modern starter template for building high-performance web applicati
 ## Fastify Plugins
 
 - **[@fastify/auth](https://github.com/fastify/fastify-auth)**: Authentication plugin for Fastify
-- **[@fastify/cors](https://github.com/fastify/fastify-cors)**: Enable CORS
-- **[@fastify/helmet](https://github.com/fastify/fastify-helmet)**: Secure the application by setting various HTTP headers
 - **[@fastify/swagger](https://github.com/fastify/fastify-swagger)**: Document the API using Swagger
 - **[@scalar/fastify-api-reference](https://github.com/scalar/scalar/tree/main/packages/fastify-api-reference)**: OpenAPI/Swagger interactive API documentation
 - **[@fastify/type-provider-typebox](https://github.com/fastify/fastify-type-provider-typebox)**: Type-safe schema definition language

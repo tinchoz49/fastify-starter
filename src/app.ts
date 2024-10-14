@@ -52,8 +52,6 @@ export const createApp = (options: AppOptions = {}) => {
 
   // fastify plugins
   app.register(import('fastify-better-error'), { errors })
-  app.register(import('@fastify/cors'))
-  app.register(import('@fastify/helmet'))
 
   // user plugins
   app.register(autoload, {
@@ -76,14 +74,6 @@ export const createApp = (options: AppOptions = {}) => {
   })
 
   app.addHook('onReady', async () => {
-    if (env.DATABASE.RUN_MIGRATE) {
-      await app.drizzle.migrate()
-    }
-
-    if (env.DATABASE.RUN_SEED) {
-      await app.drizzle.seed()
-    }
-
     const hrend = process.hrtime(hrstart)
     app.log.info('Execution time (hr): %ds %dms', hrend[0], hrend[1] / 1000000)
   })

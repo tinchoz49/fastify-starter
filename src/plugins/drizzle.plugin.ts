@@ -62,6 +62,16 @@ async function drizzlePlugin(app: App) {
     }
   })
 
+  app.addHook('onReady', async () => {
+    if (env.RUN_MIGRATE) {
+      await app.drizzle.migrate()
+    }
+
+    if (env.RUN_SEED) {
+      await app.drizzle.seed()
+    }
+  })
+
   app.decorate('drizzle', {
     db,
     entities: schema,
