@@ -1,12 +1,6 @@
 import { createApp } from './app.js'
 
-const app = createApp({
-  env: {
-    DATABASE: {
-      RUN_IN_MEMORY: true,
-    },
-  },
-})
+const app = createApp()
 
 await app.listen({
   port: app.env.PORT,

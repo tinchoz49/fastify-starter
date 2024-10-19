@@ -1,6 +1,6 @@
 import { Type } from '@fastify/type-provider-typebox'
 
-import { DatabaseEnvSchema } from './plugins/drizzle.plugin.js'
+import { DatabaseEnvSchema } from './plugins/drizzle.js'
 
 export default Type.Object({
   NODE_ENV: Type.Union([

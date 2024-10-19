@@ -1,11 +1,8 @@
 import type { Server as HttpServer } from 'node:http'
 import type { Server as HttpsServer } from 'node:https'
 
-import path from 'node:path'
-
 import type { Static } from '@sinclair/typebox'
 
-import autoload from '@fastify/autoload'
 import { type TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import { serverFactory } from '@geut/fastify-uws'
 import fastify, { type FastifyHttpOptions, type FastifyHttpsOptions } from 'fastify'
@@ -46,31 +43,18 @@ export const createApp = (options: AppOptions = {}) => {
   })
     .withTypeProvider<TypeBoxTypeProvider>()
 
-  // setup environments
+  // setup parsed environment variables
   app.decorate('env', env)
 
   // fastify plugins
   app.register(import('fastify-better-error'), { errors })
-
-  // user plugins
-  app.register(autoload, {
-    dir: path.join(import.meta.dirname, 'plugins'),
-    matchFilter: /\.plugin\.(ts|js)$/i,
-    forceESM: true,
-    encapsulate: false,
-  })
+  app.register(import('./plugins/auth.js'))
+  app.register(import('./plugins/documentation.js'))
+  app.register(import('./plugins/drizzle.js'))
+  app.register(import('./plugins/schema-loader.js'))
 
   // routes
-  app.register(autoload, {
-    dir: path.join(import.meta.dirname, 'routes'),
-    matchFilter: /\.routes\.(ts|js)$/i,
-    autoHooks: true,
-    autoHooksPattern: /^_hooks\.(ts|js)$/i,
-    forceESM: true,
-    options: {
-      prefix: '/api',
-    },
-  })
+  app.register(import('./routes/index.js'), { prefix: '/api' })
 
   app.addHook('onReady', async () => {
     const hrend = process.hrtime(hrstart)
