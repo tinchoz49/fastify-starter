@@ -5,13 +5,12 @@ interface RouteModule {
   prefix?: string
 }
 
-const router = (app: App) => async <T extends Promise<RouteModule>>(module: T) => {
-  const { default: routes, prefix } = await module
-  return app.register(routes, { prefix })
-}
-
 export default async function routes(app: App) {
-  const register = router(app)
+  const register = async <T extends Promise<RouteModule>>(module: T) => {
+    const { default: routes, prefix } = await module
+    return app.register(routes, { prefix })
+  }
+
   return Promise.all([
     register(import('./health.js')),
     register(import('./posts.js')),
