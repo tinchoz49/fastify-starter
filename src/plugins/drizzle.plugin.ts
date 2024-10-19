@@ -1,5 +1,6 @@
-import { drizzle, migrate } from 'drizzle-orm/connect'
-import { type PostgresJsDatabase } from 'drizzle-orm/postgres-js'
+import { Type } from '@sinclair/typebox'
+import { drizzle } from 'drizzle-orm/postgres-js'
+import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import fp from 'fastify-plugin'
 
 import type { App } from '../app.js'
@@ -7,41 +8,73 @@ import type { App } from '../app.js'
 import * as schema from '../db/schema.js'
 import seed from '../db/seed.js'
 
-type DB = Awaited<ReturnType<typeof drizzle<'postgres-js', typeof schema>>>
+type Schema = typeof schema
+type DB = ReturnType<typeof drizzle<Schema>>
+
+async function getMemoryConnection() {
+  const { drizzle } = await import('drizzle-orm/pglite')
+  return drizzle({
+    schema,
+    connection: {
+      extensions: {
+        uuid_ossp: (await import('@electric-sql/pglite/contrib/uuid_ossp')).uuid_ossp,
+      },
+    },
+  }) as unknown as DB
+}
+
+export const DatabaseEnvSchema = Type.Intersect([
+  Type.Union([
+    Type.Object({
+      URL: Type.String(),
+    }),
+    Type.Object({
+      HOST: Type.String(),
+      PORT: Type.Number(),
+      USER: Type.String(),
+      PASSWORD: Type.String(),
+      NAME: Type.String(),
+    }),
+  ]),
+  Type.Object({
+    PATH: Type.Optional(Type.String()),
+    SSL: Type.Optional(Type.Boolean()),
+    MAX: Type.Optional(Type.Number()),
+    MAX_LIFETIME: Type.Optional(Type.Number()),
+    IDLE_TIMEOUT: Type.Optional(Type.Number()),
+    CONNECT_TIMEOUT: Type.Optional(Type.Number()),
+    RUN_IN_MEMORY: Type.Boolean({ default: false }),
+    RUN_SEED: Type.Boolean({ default: false }),
+    RUN_MIGRATE: Type.Boolean({ default: false }),
+  }),
+])
 
 async function drizzlePlugin(app: App) {
-  const env = app.env.DATABASE
-  const inMemory = 'IN_MEMORY' in env
-  let db: DB
-  const dbConnection = inMemory
-    ? {
-        extensions: {
-          uuid_ossp: (await import('@electric-sql/pglite/contrib/uuid_ossp')).uuid_ossp,
-        },
-      }
-    : {
-        host: env.HOST,
-        port: env.PORT,
-        user: env.USER,
-        password: env.PASSWORD,
-        database: env.NAME,
-        path: env.PATH,
-        ssl: env.SSL,
-        max: env.MAX,
-        idle_timeout: env.IDLE_TIMEOUT,
-        max_lifetime: env.MAX_LIFETIME,
-        connect_timeout: env.CONNECT_TIMEOUT,
-      }
+  const { RUN_MIGRATE, RUN_SEED, RUN_IN_MEMORY, ...opts } = app.env.DATABASE
 
-  if (inMemory) {
-    db = await drizzle('pglite', {
-      schema,
-      connection: dbConnection,
-    }) as unknown as DB
+  let db: DB
+  if (RUN_IN_MEMORY) {
+    db = await getMemoryConnection()
   } else {
-    db = await drizzle('postgres-js', {
+    db = drizzle({
       schema,
-      connection: dbConnection,
+      connection: {
+        ...('URL' in opts
+          ? { url: opts.URL }
+          : {
+              host: opts.HOST,
+              port: opts.PORT,
+              user: opts.USER,
+              password: opts.PASSWORD,
+              database: opts.NAME,
+            }),
+        path: opts.PATH,
+        ssl: opts.SSL,
+        max: opts.MAX,
+        idle_timeout: opts.IDLE_TIMEOUT,
+        max_lifetime: opts.MAX_LIFETIME,
+        connect_timeout: opts.CONNECT_TIMEOUT,
+      },
     })
   }
 
@@ -63,11 +96,11 @@ async function drizzlePlugin(app: App) {
   })
 
   app.addHook('onReady', async () => {
-    if (env.RUN_MIGRATE) {
+    if (RUN_MIGRATE) {
       await app.drizzle.migrate()
     }
 
-    if (env.RUN_SEED) {
+    if (RUN_SEED) {
       await app.drizzle.seed()
     }
   })
@@ -90,8 +123,8 @@ export default fp(drizzlePlugin, {
 declare module 'fastify' {
   interface FastifyInstance {
     drizzle: {
-      db: PostgresJsDatabase<typeof schema>
-      entities: typeof schema
+      db: DB
+      entities: Schema
       migrate: () => Promise<void>
       seed: () => Promise<void>
     }

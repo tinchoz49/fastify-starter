@@ -11,7 +11,8 @@ describe('Auth API', () => {
   const app = createApp({
     env: {
       DATABASE: {
-        IN_MEMORY: true,
+        URL: 'postgresql://localhost:5432/db',
+        RUN_IN_MEMORY: true,
         RUN_MIGRATE: true,
         RUN_SEED: true,
       },

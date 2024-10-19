@@ -1,5 +1,7 @@
 import { Type } from '@fastify/type-provider-typebox'
 
+import { DatabaseEnvSchema } from './plugins/drizzle.plugin.js'
+
 export default Type.Object({
   NODE_ENV: Type.Union([
     Type.Literal('development'),
@@ -23,30 +25,7 @@ export default Type.Object({
     ])
   ),
 
-  DATABASE: Type.Intersect([
-    Type.Union([
-      Type.Object({
-        IN_MEMORY: Type.Literal(true),
-      }),
-      Type.Object({
-        HOST: Type.String(),
-        PORT: Type.Number(),
-        USER: Type.String(),
-        PASSWORD: Type.String(),
-        NAME: Type.String(),
-        PATH: Type.Optional(Type.String()),
-        SSL: Type.Optional(Type.Boolean()),
-        MAX: Type.Optional(Type.Number()),
-        MAX_LIFETIME: Type.Optional(Type.Number()),
-        IDLE_TIMEOUT: Type.Optional(Type.Number()),
-        CONNECT_TIMEOUT: Type.Optional(Type.Number()),
-      }),
-    ]),
-    Type.Object({
-      RUN_SEED: Type.Boolean({ default: false }),
-      RUN_MIGRATE: Type.Boolean({ default: false }),
-    }),
-  ]),
+  DATABASE: DatabaseEnvSchema,
 
   JWT: Type.Object({
     SECRET: Type.String({ description: 'Secret key for JWT token generation and verification' }),

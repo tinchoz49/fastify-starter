@@ -15,8 +15,7 @@ import { type DeepPartial, parseEnv } from 'typebox-env'
 import EnvSchema from './env.js'
 import * as errors from './errors.js'
 
-export interface AppOptions extends FastifyHttpOptions<HttpServer> {
-  https?: FastifyHttpsOptions<HttpsServer>['https']
+type AppOptions = Partial<FastifyHttpsOptions<HttpsServer>> & FastifyHttpOptions<HttpServer> & {
   env?: DeepPartial<Static<typeof EnvSchema>>
 }
 

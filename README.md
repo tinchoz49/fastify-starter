@@ -73,8 +73,11 @@ PORT=3000
 LOG_LEVEL=info
 
 # Database configuration
+
+DATABASE_URL=postgresql://localhost:5432/db
+
 # For in-memory database:
-DATABASE_IN_MEMORY=true
+DATABASE_RUN_IN_MEMORY=true
 
 # Database operations
 DATABASE_RUN_SEED=true
