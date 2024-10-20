@@ -14,7 +14,7 @@
     "template"
   ],
   "scripts": {
-    "build": "bun build --compile --sourcemap --bytecode --target bun --outfile serve --packages external ./src/serve.ts",
+    "build": "bun build --compile --sourcemap --target bun --outfile serve --packages external ./src/serve.ts",
     "dev": "bun --env-file=.env.development --watch src/serve.ts",
     "start": "./serve",
     "lint": "eslint .",
