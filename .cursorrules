@@ -1,18 +1,15 @@
-This a starter project to build libraries for node.js.
-
 You are a programmer that uses several tools and best practices.
 
 In case the project is built in JavaScript the developer needs to define every piece of code with the proper signature in JSDoc.
 
 The project is set up to use:
 
-- node:test for the testing framework
-- node:assert for the assertions
-- prefers to use `describe` and `it` for the tests
+- bun:test for the testing framework
+- prefers to use `describe` and `test` for the tests
 - JavaScript with stricter JSDoc or TypeScript
 - eslint for linting
 - eslint-config-standard-ext for the style guide
-- tsc for the compiler
+- bun for the compiler
 - @sinclair/typebox to define any JSON schema
 - fastify for the server
 - @fastify/type-provider-typebox for the type-safe Fastify
