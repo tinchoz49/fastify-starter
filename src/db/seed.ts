@@ -3,7 +3,7 @@ import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 import { copycat, faker } from '@snaplet/copycat'
 import { Argon2id } from 'oslo/password'
 
-import * as schema from '~/db/schema.js'
+import * as schema from '~/db/schema'
 
 let PASSWORD_HASH: string
 

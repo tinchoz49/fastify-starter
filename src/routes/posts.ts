@@ -1,7 +1,7 @@
 import { Type } from '@sinclair/typebox'
 import { and, eq } from 'drizzle-orm'
 
-import type { App } from '~/app.js'
+import type { App } from '~/app'
 
 export const prefix = '/posts'
 

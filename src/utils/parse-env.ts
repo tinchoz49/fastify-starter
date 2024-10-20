@@ -3,7 +3,7 @@ import type { Static } from '@sinclair/typebox'
 import { AssertError } from '@sinclair/typebox/value'
 import { type DeepPartial, parseEnv as parseEnvBase } from 'typebox-env'
 
-import Schema from '../env.js'
+import Schema from '../env'
 
 export type EnvSchema = Static<typeof Schema>
 

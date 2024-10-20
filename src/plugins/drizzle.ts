@@ -3,10 +3,10 @@ import { drizzle } from 'drizzle-orm/postgres-js'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import fp from 'fastify-plugin'
 
-import type { App } from '../app.js'
+import type { App } from '../app'
 
-import * as schema from '../db/schema.js'
-import seed from '../db/seed.js'
+import * as schema from '../db/schema'
+import seed from '../db/seed'
 
 type Schema = typeof schema
 type DB = ReturnType<typeof drizzle<Schema>>

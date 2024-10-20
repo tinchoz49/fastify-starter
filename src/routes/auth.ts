@@ -1,7 +1,7 @@
 import { Type } from '@sinclair/typebox'
 import { Argon2id } from 'oslo/password'
 
-import type { App } from '~/app.js'
+import type { App } from '~/app'
 
 const argon2id = new Argon2id()
 

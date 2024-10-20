@@ -1,8 +1,8 @@
-import { createApp } from './app.js'
+import { createApp } from './app'
 
 const app = createApp()
 
-await app.listen({
+app.listen({
   port: app.env.PORT,
   host: app.env.HOST,
 })

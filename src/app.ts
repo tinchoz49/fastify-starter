@@ -43,13 +43,15 @@ export const createApp = (options: AppOptions = {}) => {
 
   // fastify plugins
   app.register(import('fastify-better-error'), { errors })
-  app.register(import('./plugins/auth.js'))
-  app.register(import('./plugins/documentation.js'))
-  app.register(import('./plugins/drizzle.js'))
-  app.register(import('./plugins/schema-loader.js'))
+  app.register(import('./plugins/auth'))
+  app.register(import('./plugins/documentation'))
+  app.register(import('./plugins/drizzle'))
+
+  // schemas
+  app.register(import('./schemas'))
 
   // routes
-  app.register(import('./routes/index.js'), { prefix: '/api' })
+  app.register(import('./routes'), { prefix: '/api' })
 
   app.addHook('onReady', async () => {
     const hrend = process.hrtime(hrstart)

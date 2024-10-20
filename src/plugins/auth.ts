@@ -2,7 +2,7 @@ import type { FastifyRequest } from 'fastify'
 
 import fp from 'fastify-plugin'
 
-import type { App } from '~/app.js'
+import type { App } from '~/app'
 
 async function authPlugin(app: App) {
   app.register(import('@fastify/auth'))

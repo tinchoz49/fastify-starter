@@ -1,4 +1,4 @@
-import type { App } from '~/app.js'
+import type { App } from '~/app'
 
 interface RouteModule {
   default: (app: App) => Promise<void>
@@ -12,8 +12,8 @@ export default async function routes(app: App) {
   }
 
   return Promise.all([
-    register(import('./health.js')),
-    register(import('./posts.js')),
-    register(import('./auth.js')),
+    register(import('./health')),
+    register(import('./posts')),
+    register(import('./auth')),
   ])
 }

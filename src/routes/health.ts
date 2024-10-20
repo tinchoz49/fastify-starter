@@ -1,7 +1,7 @@
 import { Type } from '@sinclair/typebox'
 import { sql } from 'drizzle-orm'
 
-import type { App } from '~/app.js'
+import type { App } from '~/app'
 
 export default async function healthRoutes(app: App) {
   const { db } = app.drizzle

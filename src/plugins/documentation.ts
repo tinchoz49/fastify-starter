@@ -1,6 +1,6 @@
 import fp from 'fastify-plugin'
 
-import type { App } from '../app.js'
+import type { App } from '../app'
 
 async function documentationPlugin(app: App) {
   if (!app.env.OPENAPI.ENABLED) {
