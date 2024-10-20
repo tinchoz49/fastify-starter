@@ -48,7 +48,9 @@ export const createApp = (options: AppOptions = {}) => {
   app.register(import('./plugins/auth.js'))
   app.register(import('./plugins/documentation.js'))
   app.register(import('./plugins/drizzle.js'))
-  app.register(import('./plugins/schema-loader.js'))
+
+  // schemas
+  app.register(import('./schemas/index.js'))
 
   // routes
   app.register(import('./routes/index.js'), { prefix: '/api' })
