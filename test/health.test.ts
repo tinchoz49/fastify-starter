@@ -1,5 +1,5 @@
-import assert from 'node:assert/strict'
-import { after, before, describe, it } from 'node:test'
+import { afterAll, beforeAll, describe, expect, test } from 'bun:test'
+import request from 'supertest'
 
 import { createApp } from '~/app.js'
 
@@ -18,56 +18,57 @@ describe('Health API', () => {
     },
   })
 
-  before(async () => {
+  beforeAll(async () => {
     await app.ready()
   })
 
-  after(async () => {
+  afterAll(async () => {
     await app.close()
   })
 
-  it('GET /api/health - should check application health', async () => {
-    const res = await app.inject({
-      method: 'GET',
-      url: '/api/health',
+  describe('GET /api/health', () => {
+    test('should check application health', async () => {
+      const res = await request(app.server)
+        .get('/api/health')
+        .expect(200)
+        .expect('Content-Type', 'application/json; charset=utf-8')
+
+      expect(res.body.status).toBe('ok')
+      expect(res.body.timestamp).toBeDefined()
     })
 
-    assert.equal(res.statusCode, 200)
-
-    const body = await res.json()
-    assert.equal(body.status, 'ok')
-    assert.ok(Date.parse(body.timestamp), 'Timestamp should be a valid date string')
-  })
-
-  describe('Database failure', () => {
-    const failApp = createApp({
-      env: {
-        DATABASE: {
-          HOST: '0.0.0.0',
-          PORT: 5432,
-          USER: 'postgres',
-          PASSWORD: 'wrongpassword',
-          NAME: 'db',
+    describe('database failure', () => {
+      const failApp = createApp({
+        env: {
+          DATABASE: {
+            HOST: '0.0.0.0',
+            PORT: 5432,
+            USER: 'postgres',
+            PASSWORD: 'wrongpassword',
+            NAME: 'db',
+          },
+          JWT: {
+            SECRET: 'test',
+          },
         },
-        JWT: {
-          SECRET: 'test',
-        },
-      },
-    })
-
-    after(async () => {
-      await failApp.close()
-    })
-
-    it('GET /api/health - should return status error', async () => {
-      const res = await failApp.inject({
-        method: 'GET',
-        url: '/api/health',
       })
 
-      const body = await res.json()
-      assert.equal(res.statusCode, 200)
-      assert.equal(body.status, 'error')
+      beforeAll(async () => {
+        await failApp.ready()
+      })
+
+      afterAll(async () => {
+        await failApp.close()
+      })
+
+      test('should return status error', async () => {
+        const res = await request(failApp.server)
+          .get('/api/health')
+          .expect(200)
+          .expect('Content-Type', 'application/json; charset=utf-8')
+
+        expect(res.body.status).toBe('error')
+      })
     })
   })
 })

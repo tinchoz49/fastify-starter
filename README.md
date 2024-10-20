@@ -2,6 +2,8 @@
 
 A robust and modern starter template for building high-performance web applications using Fastify, TypeScript, and Drizzle ORM.
 
+> Bun version
+
 ## 🚀 Features
 
 - **[Fastify](https://www.fastify.io/)**: High-performance web framework for Node.js
@@ -26,15 +28,15 @@ A robust and modern starter template for building high-performance web applicati
 
 ## 🧰 Commands
 
-- `npm run dev`: Start the development server.
-- `npm run build`: Build the application.
-- `npm run start`: Start the application.
-- `npm run test`: Run the test cases.
-- `npm run coverage`: Generate the coverage report.
-- `npm run lint`: Run the linter.
-- `npm run db:generate`: Generate the migration file.
-- `npm run db:migrate`: Apply the migration to the database.
-- `npm run db:check`: Check the migration file.
+- `bun run dev`: Start the development server.
+- `bun run build`: Build the application.
+- `bun run start`: Start the application.
+- `bun run test`: Run the test cases.
+- `bun run coverage`: Generate the coverage report.
+- `bun run lint`: Run the linter.
+- `bun run db:generate`: Generate the migration file.
+- `bun run db:migrate`: Apply the migration to the database.
+- `bun run db:check`: Check the migration file.
 
 ## 📁 Structure
 
@@ -94,7 +96,7 @@ OPENAPI_UI=true
 ```
 
 ```bash
-$ npm run dev
+$ bun dev
 ```
 
 ## Issues

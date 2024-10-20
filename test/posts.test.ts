@@ -1,5 +1,5 @@
-import assert from 'node:assert/strict'
-import { after, before, describe, it } from 'node:test'
+import { afterAll, beforeAll, describe, expect, test } from 'bun:test'
+import request from 'supertest'
 
 import { createApp } from '~/app.js'
 
@@ -22,7 +22,7 @@ describe('Posts API', () => {
   let userToken: string
   let user: typeof app.drizzle.entities.users.$inferSelect
 
-  before(async () => {
+  beforeAll(async () => {
     await app.ready()
 
     const _user = await app.drizzle.db.query.users.findFirst()
@@ -33,109 +33,95 @@ describe('Posts API', () => {
     userToken = app.jwt.sign({ id: user.id, username: user.username, email: user.email })
   })
 
-  after(async () => {
+  afterAll(async () => {
     await app.close()
   })
 
-  describe('CRUD operations', () => {
-    it('GET /api/posts - get all posts', async () => {
-      const res = await app.inject({
-        method: 'GET',
-        url: '/api/posts',
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      })
+  describe('GET /api/posts', () => {
+    test('should return all posts', async () => {
+      const res = await request(app.server)
+        .get('/api/posts')
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(200)
+        .expect('Content-Type', /json/)
 
-      assert.equal(res.statusCode, 200)
-      const body = await res.json()
+      const body = res.body
       for (const post of body) {
-        assert.equal(post.authorId, user.id)
+        expect(post.authorId).toBe(user.id)
       }
     })
+  })
 
-    it('POST /api/posts - create a new post', async () => {
+  describe('POST /api/posts', () => {
+    test('should create a new post', async () => {
       const newPost = {
         title: 'New Post',
         content: 'This is a new post.',
       }
 
-      const res = await app.inject({
-        method: 'POST',
-        url: '/api/posts',
-        payload: newPost,
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      })
+      const res = await request(app.server)
+        .post('/api/posts')
+        .send(newPost)
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(201)
+        .expect('Content-Type', /json/)
 
-      assert.equal(res.statusCode, 201)
-      const body = await res.json()
-      assert.equal(body.title, newPost.title)
-      assert.equal(body.content, newPost.content)
-      assert.equal(body.authorId, user.id)
+      const body = res.body
+      expect(body.title).toBe(newPost.title)
+      expect(body.content).toBe(newPost.content)
+      expect(body.authorId).toBe(user.id)
 
       // Store the new post's ID for later tests
       newPostId = body.id
     })
+  })
 
-    it('GET /api/posts/:id - get a single post', async () => {
-      const res = await app.inject({
-        method: 'GET',
-        url: `/api/posts/${newPostId}`,
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      })
+  describe('GET /api/posts/:id', () => {
+    test('should return a single post', async () => {
+      const res = await request(app.server)
+        .get(`/api/posts/${newPostId}`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(200)
+        .expect('Content-Type', /json/)
 
-      assert.equal(res.statusCode, 200)
-      const body = await res.json()
-      assert.equal(body.id, newPostId)
-      assert.equal(body.authorId, user.id)
+      const body = res.body
+      expect(body.id).toBe(newPostId)
+      expect(body.authorId).toBe(user.id)
     })
+  })
 
-    it('PUT /api/posts/:id - update a post', async () => {
+  describe('PUT /api/posts/:id', () => {
+    test('should update a post', async () => {
       const updatedPost = {
         title: 'Updated Post',
         content: 'This post has been updated.',
       }
 
-      const res = await app.inject({
-        method: 'PUT',
-        url: `/api/posts/${newPostId}`,
-        payload: updatedPost,
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      })
+      const res = await request(app.server)
+        .put(`/api/posts/${newPostId}`)
+        .send(updatedPost)
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(200)
+        .expect('Content-Type', /json/)
 
-      assert.equal(res.statusCode, 200)
-      const body = await res.json()
-      assert.equal(body.title, updatedPost.title)
-      assert.equal(body.content, updatedPost.content)
+      const body = res.body
+      expect(body.title).toBe(updatedPost.title)
+      expect(body.content).toBe(updatedPost.content)
     })
+  })
 
-    it('DELETE /api/posts/:id - delete a post', async () => {
-      const res = await app.inject({
-        method: 'DELETE',
-        url: `/api/posts/${newPostId}`,
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      })
-
-      assert.equal(res.statusCode, 204)
+  describe('DELETE /api/posts/:id', () => {
+    test('should delete a post', async () => {
+      await request(app.server)
+        .delete(`/api/posts/${newPostId}`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(204)
 
       // Verify that the post has been deleted
-      const getRes = await app.inject({
-        method: 'GET',
-        url: `/api/posts/${newPostId}`,
-        headers: {
-          Authorization: `Bearer ${userToken}`,
-        },
-      })
-
-      assert.equal(getRes.statusCode, 404)
+      await request(app.server)
+        .get(`/api/posts/${newPostId}`)
+        .set('Authorization', `Bearer ${userToken}`)
+        .expect(404)
     })
   })
 })

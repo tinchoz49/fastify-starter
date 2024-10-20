@@ -1,44 +1,25 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": [
-      "ESNext"
-    ],
+    "lib": ["ESNext"],
+    "moduleDetection": "force",
     "baseUrl": ".",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "paths": {
       "~/*": [
         "src/*"
       ]
     },
-    "resolveJsonModule": true,
-    "types": [
-      "node",
-      "fastify"
-    ],
+    "allowImportingTsExtensions": true,
     "allowJs": true,
-    "checkJs": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": false,
     "noUnusedLocals": true,
-    "newLine": "lf",
-    "outDir": "dist",
-    "removeComments": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
+    "noUnusedParameters": true,
+    "noEmit": true,
+    "verbatimModuleSyntax": true,
     "skipLibCheck": true
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.js",
-    "src/**/*.json",
-    "test/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  }
 }

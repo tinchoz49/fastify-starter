@@ -1,9 +1,8 @@
-import assert from 'node:assert'
-import { after, before, describe, it } from 'node:test'
-
+import { afterAll, beforeAll, describe, expect, test } from 'bun:test'
 import { Argon2id } from 'oslo/password'
+import request from 'supertest'
 
-import { createApp } from '../src/app.js'
+import { createApp } from '~/app.js'
 
 const argon2id = new Argon2id()
 
@@ -22,16 +21,16 @@ describe('Auth API', () => {
     },
   })
 
-  before(async () => {
+  beforeAll(async () => {
     await app.ready()
   })
 
-  after(async () => {
+  afterAll(async () => {
     await app.close()
   })
 
   describe('POST /api/login', () => {
-    it('should login a user with valid credentials', async () => {
+    test('should login a user with valid credentials', async () => {
       // Create a test user
       const passwordHash = await argon2id.hash('P@22w0rd')
 
@@ -41,56 +40,51 @@ describe('Auth API', () => {
         passwordHash,
       }).returning()
 
-      const res = await app.inject({
-        method: 'POST',
-        url: '/api/login',
-        payload: {
+      const res = await request(app.server)
+        .post('/api/login')
+        .send({
           username: 'testuser',
           password: 'P@22w0rd',
-        },
-      })
+        })
+        .expect(200)
+        .expect('Content-Type', /json/)
 
-      assert.strictEqual(res.statusCode, 200)
-      const body = res.json()
-      assert(body.token)
-      assert.strictEqual(body.user.username, 'testuser')
-      assert.strictEqual(body.user.email, 'testuser@example.com')
+      expect(res.body.token).toBeDefined()
+      expect(res.body.user.username).toBe('testuser')
+      expect(res.body.user.email).toBe('testuser@example.com')
     })
 
-    it('should return 401 for invalid credentials', async () => {
-      const response = await app.inject({
-        method: 'POST',
-        url: '/api/login',
-        payload: {
+    test('should return 401 for invalid credentials', async () => {
+      const res = await request(app.server)
+        .post('/api/login')
+        .send({
           username: 'nonexistent',
           password: 'wrongpassword',
-        },
-      })
+        })
+        .expect(401)
 
-      assert.strictEqual(response.statusCode, 401)
+      expect(res.body.code).toBe(app.errors.UnauthorizedError.code)
     })
   })
 
   describe('POST /api/signup', () => {
-    it('should register a new user', async () => {
-      const response = await app.inject({
-        method: 'POST',
-        url: '/api/signup',
-        payload: {
+    test('should register a new user', async () => {
+      const res = await request(app.server)
+        .post('/api/signup')
+        .send({
           username: 'newuser',
           email: 'newuser@example.com',
           password: 'P@22w0rd',
-        },
-      })
+        })
+        .expect(201)
+        .expect('Content-Type', /json/)
 
-      assert.strictEqual(response.statusCode, 201)
-      const body = JSON.parse(response.body)
-      assert(body.token)
-      assert.strictEqual(body.user.username, 'newuser')
-      assert.strictEqual(body.user.email, 'newuser@example.com')
+      expect(res.body.token).toBeDefined()
+      expect(res.body.user.username).toBe('newuser')
+      expect(res.body.user.email).toBe('newuser@example.com')
     })
 
-    it('should return 409 for existing username or email', async () => {
+    test('should return 409 for existing username or email', async () => {
       // Create a test user
       await app.drizzle.db.insert(app.drizzle.entities.users).values({
         username: 'existinguser',
@@ -98,36 +92,34 @@ describe('Auth API', () => {
         passwordHash: await argon2id.hash('P@22w0rd'),
       })
 
-      const response = await app.inject({
-        method: 'POST',
-        url: '/api/signup',
-        payload: {
+      const res = await request(app.server)
+        .post('/api/signup')
+        .send({
           username: 'existinguser',
           email: 'new@example.com',
           password: 'P@22w0rd',
-        },
-      })
+        })
+        .expect(409)
 
-      assert.strictEqual(response.statusCode, 409)
+      expect(res.body.code).toBe(app.errors.ConflictError.code)
     })
 
-    it('should return 400 for invalid password', async () => {
-      const response = await app.inject({
-        method: 'POST',
-        url: '/api/signup',
-        payload: {
+    test('should return 400 for invalid password', async () => {
+      const res = await request(app.server)
+        .post('/api/signup')
+        .send({
           username: 'invaliduser',
           email: 'invalid@example.com',
           password: 'weakpassword',
-        },
-      })
+        })
+        .expect(400)
 
-      assert.strictEqual(response.statusCode, 400)
+      expect(res.body.code).toBe(app.errors.ValidationError.code)
     })
   })
 
   describe('GET /api/profile', () => {
-    it('should return the authenticated user profile', async () => {
+    test('should return the authenticated user profile', async () => {
       // Create a test user
       const testUser = await app.drizzle.db.insert(app.drizzle.entities.users).values({
         username: 'profileuser',
@@ -137,27 +129,22 @@ describe('Auth API', () => {
 
       const token = app.jwt.sign({ id: testUser[0].id, username: testUser[0].username, email: testUser[0].email })
 
-      const response = await app.inject({
-        method: 'GET',
-        url: '/api/profile',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      const res = await request(app.server)
+        .get('/api/profile')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200)
+        .expect('Content-Type', /json/)
 
-      assert.strictEqual(response.statusCode, 200)
-      const body = JSON.parse(response.body)
-      assert.strictEqual(body.username, 'profileuser')
-      assert.strictEqual(body.email, 'profile@example.com')
+      expect(res.body.username).toBe('profileuser')
+      expect(res.body.email).toBe('profile@example.com')
     })
 
-    it('should return 401 for unauthenticated request', async () => {
-      const response = await app.inject({
-        method: 'GET',
-        url: '/api/profile',
-      })
+    test('should return 401 for unauthenticated request', async () => {
+      const res = await request(app.server)
+        .get('/api/profile')
+        .expect(401)
 
-      assert.strictEqual(response.statusCode, 401)
+      expect(res.body.code).toBe(app.errors.JWTUnauthorizedError.code)
     })
   })
 })
