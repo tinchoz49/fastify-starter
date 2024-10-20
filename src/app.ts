@@ -1,19 +1,16 @@
 import type { Server as HttpServer } from 'node:http'
 import type { Server as HttpsServer } from 'node:https'
 
-import type { Static } from '@sinclair/typebox'
-
 import { type TypeBoxTypeProvider } from '@fastify/type-provider-typebox'
 import { serverFactory } from '@geut/fastify-uws'
 import fastify, { type FastifyHttpOptions, type FastifyHttpsOptions } from 'fastify'
 import { type BetterErrorPlugin } from 'fastify-better-error'
-import { type DeepPartial, parseEnv } from 'typebox-env'
 
-import EnvSchema from './env.js'
 import * as errors from './errors.js'
+import { type EnvOptions, type EnvSchema, parseEnv } from './utils/parse-env.js'
 
 type AppOptions = Partial<FastifyHttpsOptions<HttpsServer>> & FastifyHttpOptions<HttpServer> & {
-  env?: DeepPartial<Static<typeof EnvSchema>>
+  env?: EnvOptions
 }
 
 export const createApp = (options: AppOptions = {}) => {
@@ -21,7 +18,7 @@ export const createApp = (options: AppOptions = {}) => {
 
   const { env: envOptions = {}, ...fastifyOptions } = options
 
-  const env = parseEnv(EnvSchema, {
+  const env = parseEnv({
     ...process.env,
     ...envOptions,
   })
@@ -68,6 +65,6 @@ export type App = ReturnType<typeof createApp>
 
 declare module 'fastify' {
   interface FastifyInstance extends BetterErrorPlugin<typeof errors> {
-    env: Static<typeof EnvSchema>
+    env: EnvSchema
   }
 }

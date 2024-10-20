@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { after, before, describe, it } from 'node:test'
+import { after, before, describe, test } from 'node:test'
 
 import { createApp } from '~/app.js'
 
@@ -26,7 +26,7 @@ describe('Health API', () => {
     await app.close()
   })
 
-  it('GET /api/health - should check application health', async () => {
+  test('GET /api/health - should check application health', async () => {
     const res = await app.inject({
       method: 'GET',
       url: '/api/health',
@@ -59,7 +59,7 @@ describe('Health API', () => {
       await failApp.close()
     })
 
-    it('GET /api/health - should return status error', async () => {
+    test('GET /api/health - should return status error', async () => {
       const res = await failApp.inject({
         method: 'GET',
         url: '/api/health',

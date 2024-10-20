@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import { after, before, describe, it } from 'node:test'
+import { after, before, describe, test } from 'node:test'
 
 import { Argon2id } from 'oslo/password'
 
@@ -31,7 +31,7 @@ describe('Auth API', () => {
   })
 
   describe('POST /api/login', () => {
-    it('should login a user with valid credentials', async () => {
+    test('should login a user with valid credentials', async () => {
       // Create a test user
       const passwordHash = await argon2id.hash('P@22w0rd')
 
@@ -57,7 +57,7 @@ describe('Auth API', () => {
       assert.strictEqual(body.user.email, 'testuser@example.com')
     })
 
-    it('should return 401 for invalid credentials', async () => {
+    test('should return 401 for invalid credentials', async () => {
       const response = await app.inject({
         method: 'POST',
         url: '/api/login',
@@ -72,7 +72,7 @@ describe('Auth API', () => {
   })
 
   describe('POST /api/signup', () => {
-    it('should register a new user', async () => {
+    test('should register a new user', async () => {
       const response = await app.inject({
         method: 'POST',
         url: '/api/signup',
@@ -90,7 +90,7 @@ describe('Auth API', () => {
       assert.strictEqual(body.user.email, 'newuser@example.com')
     })
 
-    it('should return 409 for existing username or email', async () => {
+    test('should return 409 for existing username or email', async () => {
       // Create a test user
       await app.drizzle.db.insert(app.drizzle.entities.users).values({
         username: 'existinguser',
@@ -111,7 +111,7 @@ describe('Auth API', () => {
       assert.strictEqual(response.statusCode, 409)
     })
 
-    it('should return 400 for invalid password', async () => {
+    test('should return 400 for invalid password', async () => {
       const response = await app.inject({
         method: 'POST',
         url: '/api/signup',
@@ -127,7 +127,7 @@ describe('Auth API', () => {
   })
 
   describe('GET /api/profile', () => {
-    it('should return the authenticated user profile', async () => {
+    test('should return the authenticated user profile', async () => {
       // Create a test user
       const testUser = await app.drizzle.db.insert(app.drizzle.entities.users).values({
         username: 'profileuser',
@@ -151,7 +151,7 @@ describe('Auth API', () => {
       assert.strictEqual(body.email, 'profile@example.com')
     })
 
-    it('should return 401 for unauthenticated request', async () => {
+    test('should return 401 for unauthenticated request', async () => {
       const response = await app.inject({
         method: 'GET',
         url: '/api/profile',

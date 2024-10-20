@@ -13,10 +13,6 @@
       ]
     },
     "resolveJsonModule": true,
-    "types": [
-      "node",
-      "fastify"
-    ],
     "allowJs": true,
     "checkJs": true,
     "strict": true,

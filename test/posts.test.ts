@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { after, before, describe, it } from 'node:test'
+import { after, before, describe, test } from 'node:test'
 
 import { createApp } from '~/app.js'
 
@@ -37,8 +37,8 @@ describe('Posts API', () => {
     await app.close()
   })
 
-  describe('CRUD operations', () => {
-    it('GET /api/posts - get all posts', async () => {
+  describe('GET /api/posts', () => {
+    test('get all posts', async () => {
       const res = await app.inject({
         method: 'GET',
         url: '/api/posts',
@@ -53,8 +53,10 @@ describe('Posts API', () => {
         assert.equal(post.authorId, user.id)
       }
     })
+  })
 
-    it('POST /api/posts - create a new post', async () => {
+  describe('POST /api/posts', () => {
+    test('create a new post', async () => {
       const newPost = {
         title: 'New Post',
         content: 'This is a new post.',
@@ -78,8 +80,10 @@ describe('Posts API', () => {
       // Store the new post's ID for later tests
       newPostId = body.id
     })
+  })
 
-    it('GET /api/posts/:id - get a single post', async () => {
+  describe('GET /api/posts/:id', () => {
+    test('get a single post', async () => {
       const res = await app.inject({
         method: 'GET',
         url: `/api/posts/${newPostId}`,
@@ -93,8 +97,10 @@ describe('Posts API', () => {
       assert.equal(body.id, newPostId)
       assert.equal(body.authorId, user.id)
     })
+  })
 
-    it('PUT /api/posts/:id - update a post', async () => {
+  describe('PUT /api/posts/:id', () => {
+    test('update a post', async () => {
       const updatedPost = {
         title: 'Updated Post',
         content: 'This post has been updated.',
@@ -114,8 +120,10 @@ describe('Posts API', () => {
       assert.equal(body.title, updatedPost.title)
       assert.equal(body.content, updatedPost.content)
     })
+  })
 
-    it('DELETE /api/posts/:id - delete a post', async () => {
+  describe('DELETE /api/posts/:id', () => {
+    test('delete a post', async () => {
       const res = await app.inject({
         method: 'DELETE',
         url: `/api/posts/${newPostId}`,

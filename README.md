@@ -2,6 +2,8 @@
 
 A robust and modern starter template for building high-performance web applications using Fastify, TypeScript, and Drizzle ORM.
 
+> Node.js version. If you are looking to use this template with Bun go to [Bun Starter](https://github.com/tinchoz49/fastify-starter/tree/bun)
+
 ## 🚀 Features
 
 - **[Fastify](https://www.fastify.io/)**: High-performance web framework for Node.js

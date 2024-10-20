@@ -5,10 +5,9 @@ import { Argon2id } from 'oslo/password'
 
 import * as schema from '~/db/schema.js'
 
-const argon2id = new Argon2id()
-const PASSWORD_HASH = await argon2id.hash('P@22w0rd')
+let PASSWORD_HASH: string
 
-export function createRandomUser(...args: any[]) {
+function createRandomUser(...args: any[]) {
   return {
     username: copycat.username('foo' + args[1]),
     email: copycat.email('foo' + args[1]),
@@ -16,7 +15,7 @@ export function createRandomUser(...args: any[]) {
   }
 }
 
-export function createRandomPost() {
+function createRandomPost() {
   return {
     title: faker.lorem.sentence(),
     content: faker.lorem.paragraph(),
@@ -24,6 +23,9 @@ export function createRandomPost() {
 }
 
 export default async function seed(db: PostgresJsDatabase<typeof schema>) {
+  const argon2id = new Argon2id()
+  PASSWORD_HASH = await argon2id.hash('P@22w0rd')
+
   const allUsers = await db.insert(schema.users).values(
     faker.helpers.multiple(createRandomUser, {
       count: 5,
