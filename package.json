@@ -31,7 +31,6 @@
     "@fastify/type-provider-typebox": "^5.0.0",
     "@geut/fastify-uws": "^6.0.0",
     "@scalar/fastify-api-reference": "^1.25.30",
-    "@sinclair/typebox": "^0.33.12",
     "@snaplet/copycat": "^5.0.0",
     "drizzle-orm": "^0.35.1",
     "fastify": "^5.0.0",
@@ -43,6 +42,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.2.11",
+    "@sinclair/typebox": "^0.33.12",
     "@types/node": "^22.7.1",
     "c8": "^10.1.2",
     "drizzle-kit": "^0.26.2",
